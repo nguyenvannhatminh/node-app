@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     port: '3306',
     user: 'root',      
     password: '123456',      // Mật khẩu của bạn
-    database: 'studentreg' // Tên database
+    database: 'STUDENTSREG' // Tên database
 });
 
 // 2. Establish connection

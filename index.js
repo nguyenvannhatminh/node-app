@@ -12,7 +12,7 @@ establishConnection();
 // 1. READ (Lấy danh sách sinh viên)
 app.get('/api/students', async (req, res) => {
     try {
-        const sql = "SELECT * FROM Student";
+        const sql = "SELECT * FROM STUDENT";
         const results = await query(sql);
         res.status(200).json(results);
     } catch (error) {
@@ -23,11 +23,12 @@ app.get('/api/students', async (req, res) => {
 
 // 2. CREATE (Thêm sinh viên mới)
 app.post('/api/students', async (req, res) => {
-    const { full_name, email, major } = req.body;
+    // Nhận các trường tương ứng với CSDL mới (sid, sname, email, tutor_id)
+    const { sid, sname, email, tutor_id } = req.body;
     try {
-        const sql = "INSERT INTO Student (full_name, email, major) VALUES (?, ?, ?)";
-        const results = await query(sql, [full_name, email, major]);
-        res.status(201).json({ message: "Thêm sinh viên thành công!", id: results.insertId });
+        const sql = "INSERT INTO STUDENT (SID, SNAME, EMAIL, Tutor_Id) VALUES (?, ?, ?, ?)";
+        await query(sql, [sid, sname, email, tutor_id]);
+        res.status(201).json({ message: "Thêm sinh viên thành công!", sid: sid });
     } catch (error) {
         console.error("LỖI POST:", error);
         res.status(500).json({ error: 'Không thể thêm sinh viên', details: error.message });
@@ -36,11 +37,11 @@ app.post('/api/students', async (req, res) => {
 
 // 3. UPDATE (Cập nhật thông tin sinh viên) 
 app.put('/api/students/:id', async (req, res) => {
-    const { full_name, email, major } = req.body;
+    const { sname, email, tutor_id } = req.body;
     try {
-        // Sửa id = ? thành student_id = ?
-        const sql = "UPDATE Student SET full_name = ?, email = ?, major = ? WHERE student_id = ?";
-        await query(sql, [full_name, email, major, req.params.id]);
+        // Cập nhật theo khóa chính SID
+        const sql = "UPDATE STUDENT SET SNAME = ?, EMAIL = ?, Tutor_Id = ? WHERE SID = ?";
+        await query(sql, [sname, email, tutor_id, req.params.id]);
         res.status(200).json({ message: "Cập nhật sinh viên thành công!" });
     } catch (error) {
         console.error("LỖI PUT:", error);
@@ -51,8 +52,8 @@ app.put('/api/students/:id', async (req, res) => {
 // 4. DELETE (Xóa sinh viên)
 app.delete('/api/students/:id', async (req, res) => {
     try {
-        // Sửa id = ? thành student_id = ?
-        const sql = "DELETE FROM Student WHERE student_id = ?";
+        // Xóa theo khóa chính SID
+        const sql = "DELETE FROM STUDENT WHERE SID = ?";
         await query(sql, [req.params.id]);
         res.status(200).json({ message: "Xóa sinh viên thành công!" });
     } catch (error) {
